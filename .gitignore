@@ -28,5 +28,17 @@ go.work.sum
 .env
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.idea/
+.vscode/
+
+# exclude any dependency directories
+node_modules/
+vendor/
+
+# exclude build artifacts
+build/
+dist/
+bin/
+tmp/
+log/
+
