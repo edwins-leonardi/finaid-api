@@ -3,7 +3,7 @@
 version: '3'
 
 vars:
-  GREETING: Hello, World!
+  DBML_FILE: "./schema.dbml"
 
 tasks:
   default:
@@ -21,3 +21,18 @@ tasks:
   dev:
     desc: "Start development server"
     cmd: air
+
+  service:up:
+    desc: "Start PostgreSQL service"
+    cmds:
+      - docker-compose up -d postgres
+
+  service:down:
+    desc: "Stop PostgreSQL service"
+    cmds:
+      - docker-compose down
+
+  db:docs:
+    desc: "Generate database documentation from schema.dbml"
+    cmds:
+      - dbdocs build {{.DBML_FILE}}

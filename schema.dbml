@@ -1,0 +1,11 @@
+// Financial Aid Domain Models
+// Generated for dbdocs.io
+
+Table person {
+  id bigint [primary key, increment]
+  name varchar(255) [not null]
+  email varchar(255) [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+

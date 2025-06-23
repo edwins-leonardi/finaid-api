@@ -33,6 +33,29 @@ curl http://localhost:8080/hello
 curl http://localhost:8080/health
 ```
 
+## Database Setup
+
+The project includes a PostgreSQL database via Docker Compose.
+
+### Start the database:
+
+```bash
+docker-compose up -d postgres
+```
+
+### Database connection details:
+- Host: `localhost`
+- Port: `5432`
+- Database: `finaid`
+- Username: `finaid_user`
+- Password: `finaid_password`
+
+### Stop the database:
+
+```bash
+docker-compose down
+```
+
 ## Building
 
 To build the binary:
