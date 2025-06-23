@@ -4,6 +4,10 @@ version: '3'
 
 vars:
   DBML_FILE: "./schema.dbml"
+  DSN: "{{.DB_CONNECTION}}://{{.DB_USER}}:{{.DB_PASSWORD}}@{{.DB_HOST}}:{{.DB_PORT}}/{{.DB_NAME}}?sslmode=disable"
+
+dotenv:
+  - ".env"
 
 tasks:
   default:
@@ -17,6 +21,7 @@ tasks:
       - go mod download
       - go install github.com/go-task/task/v3/cmd/task@latest
       - go install github.com/air-verse/air@latest
+      - go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
   dev:
     desc: "Start development server"
@@ -32,7 +37,26 @@ tasks:
     cmds:
       - docker-compose down
 
+  db:create:
+    desc: "Create database if it doesn't exist"
+    cmds:
+      - docker exec finaid-postgres psql -U {{.DB_USER}} -d postgres -c "CREATE DATABASE {{.DB_NAME}};" || true
+
+  db:drop:
+    desc: "Drop database if it exists"
+    cmds:
+      - docker exec finaid-postgres psql -U {{.DB_USER}} -d postgres -c "DROP DATABASE IF EXISTS {{.DB_NAME}};"
+
   db:docs:
     desc: "Generate database documentation from schema.dbml"
     cmds:
       - dbdocs build {{.DBML_FILE}}
+
+  migrate:up:
+    desc: "Run database migrations"
+    cmd: migrate -database {{.DSN}} -path ./internal/adapter/storage/postgres/migrations -verbose up 
+
+  migrate:down:
+    desc: "Rollback database migrations"
+    cmd: migrate -database {{.DSN}} -path ./internal/adapter/storage/postgres/migrations -verbose down
+
