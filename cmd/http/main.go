@@ -8,6 +8,8 @@ import (
 	"github.com/edwins-leonardi/finaid-api/internal/adapter/config"
 	"github.com/edwins-leonardi/finaid-api/internal/adapter/handler/http"
 	"github.com/edwins-leonardi/finaid-api/internal/adapter/logger"
+	"github.com/edwins-leonardi/finaid-api/internal/adapter/storage/memory/repository"
+	"github.com/edwins-leonardi/finaid-api/internal/core/service"
 )
 
 func main() {
@@ -22,9 +24,16 @@ func main() {
 
 	slog.Info("Starting the application", "app", config.App.Name, "env", config.App.Env)
 
+	// Dependency injection
+	// Person
+	personRepo := repository.NewPersonRepository()
+	personService := service.NewPersonService(personRepo)
+	personHandler := http.NewPersonHandler(personService)
+
 	// Init router
 	router, err := http.NewRouter(
 		config.HTTP,
+		*personHandler,
 	)
 	if err != nil {
 		slog.Error("Error initializing router", "error", err)

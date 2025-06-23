@@ -16,7 +16,10 @@ type Router struct {
 }
 
 // NewRouter creates a new HTTP router
-func NewRouter(config *config.HTTP) (*Router, error) {
+func NewRouter(
+	config *config.HTTP,
+	personHandler PersonHandler,
+) (*Router, error) {
 
 	// Disable debug mode in production
 	if config.Env == "production" {
@@ -46,6 +49,11 @@ func NewRouter(config *config.HTTP) (*Router, error) {
 					"message": "Hello from Finaid API!",
 				})
 			})
+		}
+		user := v1.Group("/persons")
+		{
+			user.GET("", personHandler.List)
+			user.POST("", personHandler.Create)
 		}
 	}
 
