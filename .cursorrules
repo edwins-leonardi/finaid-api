@@ -1,0 +1,4 @@
+- this is a golang project
+- we are using hexagonal architecture
+- we are using gin for rest http calls
+- we are using postgresql as a db
