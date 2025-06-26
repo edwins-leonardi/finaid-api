@@ -9,6 +9,7 @@ import (
 type (
 	Container struct {
 		App  *App
+		DB   *DB
 		HTTP *HTTP
 	}
 
@@ -16,6 +17,16 @@ type (
 	App struct {
 		Name string
 		Env  string
+	}
+
+	// Database contains all the environment variables for the database
+	DB struct {
+		Connection string
+		Host       string
+		Port       string
+		User       string
+		Password   string
+		Name       string
 	}
 
 	HTTP struct {
@@ -40,6 +51,15 @@ func New() (*Container, error) {
 		Env:  os.Getenv("APP_ENV"),
 	}
 
+	db := &DB{
+		Connection: os.Getenv("DB_CONNECTION"),
+		Host:       os.Getenv("DB_HOST"),
+		Port:       os.Getenv("DB_PORT"),
+		User:       os.Getenv("DB_USER"),
+		Password:   os.Getenv("DB_PASSWORD"),
+		Name:       os.Getenv("DB_NAME"),
+	}
+
 	http := &HTTP{
 		Env:            os.Getenv("APP_ENV"),
 		URL:            os.Getenv("HTTP_URL"),
@@ -49,6 +69,7 @@ func New() (*Container, error) {
 
 	return &Container{
 		App:  app,
+		DB:   db,
 		HTTP: http,
 	}, nil
 }

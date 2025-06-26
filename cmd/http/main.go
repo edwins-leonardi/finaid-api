@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"os"
@@ -8,7 +9,8 @@ import (
 	"github.com/edwins-leonardi/finaid-api/internal/adapter/config"
 	"github.com/edwins-leonardi/finaid-api/internal/adapter/handler/http"
 	"github.com/edwins-leonardi/finaid-api/internal/adapter/logger"
-	"github.com/edwins-leonardi/finaid-api/internal/adapter/storage/memory/repository"
+	"github.com/edwins-leonardi/finaid-api/internal/adapter/storage/postgres"
+	"github.com/edwins-leonardi/finaid-api/internal/adapter/storage/postgres/repository"
 	"github.com/edwins-leonardi/finaid-api/internal/core/service"
 )
 
@@ -24,9 +26,17 @@ func main() {
 
 	slog.Info("Starting the application", "app", config.App.Name, "env", config.App.Env)
 
+	// Initialize database connection
+	db, err := postgres.New(context.Background(), config.DB)
+	if err != nil {
+		slog.Error("Error connecting to database", "error", err)
+		os.Exit(1)
+	}
+	defer db.Close()
+
 	// Dependency injection
 	// Person
-	personRepo := repository.NewPersonRepository()
+	personRepo := repository.NewPersonRepository(db)
 	personService := service.NewPersonService(personRepo)
 	personHandler := http.NewPersonHandler(personService)
 
