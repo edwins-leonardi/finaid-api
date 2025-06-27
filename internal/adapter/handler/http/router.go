@@ -28,9 +28,20 @@ func NewRouter(
 
 	// CORS
 	ginConfig := cors.DefaultConfig()
-	allowedOrigins := config.AllowedOrigins
-	originsList := strings.Split(allowedOrigins, ",")
-	ginConfig.AllowOrigins = originsList
+
+	// Set allowed origins
+	if config.AllowedOrigins != "" {
+		allowedOrigins := config.AllowedOrigins
+		originsList := strings.Split(allowedOrigins, ",")
+		ginConfig.AllowOrigins = originsList
+	} else {
+		// Default to allowing all origins in development
+		ginConfig.AllowAllOrigins = true
+	}
+
+	// Allow credentials and common headers
+	ginConfig.AllowCredentials = true
+	ginConfig.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 
 	router := gin.New()
 	router.Use(sloggin.New(slog.Default()), gin.Recovery(), cors.New(ginConfig))

@@ -8,6 +8,31 @@ A simple REST API built with Go and Gin framework.
 2. Navigate to the project directory
 3. Dependencies are already managed via Go modules
 
+## Environment Configuration
+
+Create a `.env` file in the root directory with the following content:
+
+```env
+# App Configuration
+APP_NAME=finaid-api
+APP_ENV=development
+
+# HTTP Configuration
+HTTP_URL=http://localhost:8080
+HTTP_PORT=8080
+HTTP_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+
+# Database Configuration
+DB_CONNECTION=postgres
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=finaid_user
+DB_PASSWORD=finaid_password
+DB_NAME=finaid
+```
+
+**Important**: The `HTTP_ALLOWED_ORIGINS` should include your frontend URL (default: `http://localhost:5173`).
+
 ## Running the API
 
 ```bash
@@ -20,6 +45,8 @@ The server will start on `http://localhost:8080`
 
 - `GET /hello` - Returns a hello message
 - `GET /health` - Health check endpoint
+- `GET /api/v1/persons` - List persons (with pagination)
+- `POST /api/v1/persons` - Create a new person
 
 ## Testing
 
@@ -31,6 +58,9 @@ curl http://localhost:8080/hello
 
 # Test health endpoint
 curl http://localhost:8080/health
+
+# Test persons endpoint
+curl http://localhost:8080/api/v1/persons
 ```
 
 ## Database Setup
