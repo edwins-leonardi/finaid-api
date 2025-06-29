@@ -40,10 +40,16 @@ func main() {
 	personService := service.NewPersonService(personRepo)
 	personHandler := http.NewPersonHandler(personService)
 
+	// Account
+	accountRepo := repository.NewAccountRepository(db)
+	accountService := service.NewAccountService(accountRepo, personRepo)
+	accountHandler := http.NewAccountHandler(accountService)
+
 	// Init router
 	router, err := http.NewRouter(
 		config.HTTP,
 		*personHandler,
+		*accountHandler,
 	)
 	if err != nil {
 		slog.Error("Error initializing router", "error", err)

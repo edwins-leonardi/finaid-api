@@ -19,6 +19,7 @@ type Router struct {
 func NewRouter(
 	config *config.HTTP,
 	personHandler PersonHandler,
+	accountHandler AccountHandler,
 ) (*Router, error) {
 
 	// Disable debug mode in production
@@ -69,6 +70,14 @@ func NewRouter(
 			user.GET("/:id", personHandler.GetByID)
 			user.PUT("/:id", personHandler.Update)
 			user.DELETE("/:id", personHandler.Delete)
+		}
+		account := v1.Group("/accounts")
+		{
+			account.GET("", accountHandler.List)
+			account.POST("", accountHandler.Create)
+			account.GET("/:id", accountHandler.GetByID)
+			account.PUT("/:id", accountHandler.Update)
+			account.DELETE("/:id", accountHandler.Delete)
 		}
 	}
 
