@@ -33,6 +33,7 @@ func NewRouter(
 	if config.AllowedOrigins != "" {
 		allowedOrigins := config.AllowedOrigins
 		originsList := strings.Split(allowedOrigins, ",")
+		slog.Info("Allowed origins", "origins", originsList)
 		ginConfig.AllowOrigins = originsList
 	} else {
 		// Default to allowing all origins in development
