@@ -21,6 +21,7 @@ func NewRouter(
 	personHandler PersonHandler,
 	accountHandler AccountHandler,
 	expenseCategoryHandler ExpenseCategoryHandler,
+	expenseSubCategoryHandler ExpenseSubCategoryHandler,
 ) (*Router, error) {
 
 	// Disable debug mode in production
@@ -83,12 +84,22 @@ func NewRouter(
 		expenses := v1.Group("/expenses")
 		{
 			expenseCategory := expenses.Group("/categories")
+			{
+				expenseCategory.GET("", expenseCategoryHandler.List)
+				expenseCategory.POST("", expenseCategoryHandler.Create)
+				expenseCategory.GET("/:id", expenseCategoryHandler.GetByID)
+				expenseCategory.PUT("/:id", expenseCategoryHandler.Update)
+				expenseCategory.DELETE("/:id", expenseCategoryHandler.Delete)
 
-			expenseCategory.GET("", expenseCategoryHandler.List)
-			expenseCategory.POST("", expenseCategoryHandler.Create)
-			expenseCategory.GET("/:id", expenseCategoryHandler.GetByID)
-			expenseCategory.PUT("/:id", expenseCategoryHandler.Update)
-			expenseCategory.DELETE("/:id", expenseCategoryHandler.Delete)
+				expenseSubCategory := expenseCategory.Group("/subcategories")
+				{
+					expenseSubCategory.GET("", expenseSubCategoryHandler.List)
+					expenseSubCategory.POST("", expenseSubCategoryHandler.Create)
+					expenseSubCategory.GET("/:id", expenseSubCategoryHandler.GetByID)
+					expenseSubCategory.PUT("/:id", expenseSubCategoryHandler.Update)
+					expenseSubCategory.DELETE("/:id", expenseSubCategoryHandler.Delete)
+				}
+			}
 		}
 	}
 
