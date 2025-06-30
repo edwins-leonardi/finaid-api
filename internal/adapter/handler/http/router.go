@@ -20,6 +20,7 @@ func NewRouter(
 	config *config.HTTP,
 	personHandler PersonHandler,
 	accountHandler AccountHandler,
+	expenseCategoryHandler ExpenseCategoryHandler,
 ) (*Router, error) {
 
 	// Disable debug mode in production
@@ -78,6 +79,16 @@ func NewRouter(
 			account.GET("/:id", accountHandler.GetByID)
 			account.PUT("/:id", accountHandler.Update)
 			account.DELETE("/:id", accountHandler.Delete)
+		}
+		expenses := v1.Group("/expenses")
+		{
+			expenseCategory := expenses.Group("/categories")
+
+			expenseCategory.GET("", expenseCategoryHandler.List)
+			expenseCategory.POST("", expenseCategoryHandler.Create)
+			expenseCategory.GET("/:id", expenseCategoryHandler.GetByID)
+			expenseCategory.PUT("/:id", expenseCategoryHandler.Update)
+			expenseCategory.DELETE("/:id", expenseCategoryHandler.Delete)
 		}
 	}
 

@@ -13,4 +13,6 @@ var (
 	ErrNoUpdatedData = errors.New("no data to update")
 	// ErrConflictingData is an error for when data conflicts with existing data
 	ErrConflictingData = errors.New("data conflicts with existing data in unique column")
+	// ErrInvalidInput is an error for when input validation fails
+	ErrInvalidInput = errors.New("invalid input")
 )

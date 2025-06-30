@@ -21,6 +21,7 @@ var errorStatusMap = map[error]int{
 	domain.ErrDataNotFound:    http.StatusNotFound,
 	domain.ErrConflictingData: http.StatusConflict,
 	domain.ErrNoUpdatedData:   http.StatusBadRequest,
+	domain.ErrInvalidInput:    http.StatusBadRequest,
 }
 
 // response represents a response body format
