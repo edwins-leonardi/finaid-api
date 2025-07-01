@@ -44,7 +44,8 @@ func (h *ExpenseHandler) CreateExpense(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, expense)
+	rsp := newResponse(true, "Expense created successfully", expense)
+	c.JSON(http.StatusCreated, rsp)
 }
 
 // GetExpense godoc
@@ -73,7 +74,7 @@ func (h *ExpenseHandler) GetExpense(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, expense)
+	handleSuccess(c, expense)
 }
 
 // ListExpenses godoc
@@ -106,7 +107,7 @@ func (h *ExpenseHandler) ListExpenses(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, expenses)
+	handleSuccess(c, expenses)
 }
 
 // UpdateExpense godoc
@@ -142,7 +143,8 @@ func (h *ExpenseHandler) UpdateExpense(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, expense)
+	rsp := newResponse(true, "Expense updated successfully", expense)
+	c.JSON(http.StatusOK, rsp)
 }
 
 // DeleteExpense godoc
