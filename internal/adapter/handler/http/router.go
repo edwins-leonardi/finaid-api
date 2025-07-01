@@ -22,6 +22,7 @@ func NewRouter(
 	accountHandler AccountHandler,
 	expenseCategoryHandler ExpenseCategoryHandler,
 	expenseSubCategoryHandler ExpenseSubCategoryHandler,
+	expenseHandler ExpenseHandler,
 ) (*Router, error) {
 
 	// Disable debug mode in production
@@ -83,6 +84,13 @@ func NewRouter(
 		}
 		expenses := v1.Group("/expenses")
 		{
+			// Main expense routes
+			expenses.GET("", expenseHandler.ListExpenses)
+			expenses.POST("", expenseHandler.CreateExpense)
+			expenses.GET("/:id", expenseHandler.GetExpense)
+			expenses.PUT("/:id", expenseHandler.UpdateExpense)
+			expenses.DELETE("/:id", expenseHandler.DeleteExpense)
+
 			expenseCategory := expenses.Group("/categories")
 			{
 				expenseCategory.GET("", expenseCategoryHandler.List)

@@ -55,6 +55,11 @@ func main() {
 	expenseSubCategoryService := service.NewExpenseSubCategoryService(expenseSubCategoryRepo, expenseCategoryRepo, slog.Default())
 	expenseSubCategoryHandler := http.NewExpenseSubCategoryHandler(expenseSubCategoryService)
 
+	// Expense
+	expenseRepo := repository.NewExpenseRepository(db.Pool)
+	expenseService := service.NewExpenseService(expenseRepo, expenseCategoryRepo, expenseSubCategoryRepo, personRepo, slog.Default())
+	expenseHandler := http.NewExpenseHandler(expenseService)
+
 	// Init router
 	router, err := http.NewRouter(
 		config.HTTP,
@@ -62,6 +67,7 @@ func main() {
 		*accountHandler,
 		expenseCategoryHandler,
 		expenseSubCategoryHandler,
+		*expenseHandler,
 	)
 	if err != nil {
 		slog.Error("Error initializing router", "error", err)
