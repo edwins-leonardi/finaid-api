@@ -57,7 +57,7 @@ func main() {
 
 	// Expense
 	expenseRepo := repository.NewExpenseRepository(db.Pool)
-	expenseService := service.NewExpenseService(expenseRepo, expenseCategoryRepo, expenseSubCategoryRepo, personRepo, slog.Default())
+	expenseService := service.NewExpenseService(expenseRepo, expenseCategoryRepo, expenseSubCategoryRepo, personRepo, accountRepo, slog.Default())
 	expenseHandler := http.NewExpenseHandler(expenseService)
 
 	// Init router

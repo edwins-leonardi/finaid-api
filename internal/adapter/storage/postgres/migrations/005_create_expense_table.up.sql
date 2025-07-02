@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS expenses (
     subcategory_id INTEGER,
     date DATE NOT NULL,
     payee_id INTEGER NOT NULL,
+    account_id INTEGER NOT NULL,
     notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -23,6 +24,11 @@ CREATE TABLE IF NOT EXISTS expenses (
     CONSTRAINT fk_expenses_payee 
         FOREIGN KEY (payee_id) 
         REFERENCES person(id) 
+        ON DELETE RESTRICT,
+    
+    CONSTRAINT fk_expenses_account 
+        FOREIGN KEY (account_id) 
+        REFERENCES account(id) 
         ON DELETE RESTRICT
 );
 
@@ -30,9 +36,11 @@ CREATE TABLE IF NOT EXISTS expenses (
 CREATE INDEX idx_expenses_category_id ON expenses(category_id);
 CREATE INDEX idx_expenses_subcategory_id ON expenses(subcategory_id);
 CREATE INDEX idx_expenses_payee_id ON expenses(payee_id);
+CREATE INDEX idx_expenses_account_id ON expenses(account_id);
 CREATE INDEX idx_expenses_date ON expenses(date);
 CREATE INDEX idx_expenses_created_at ON expenses(created_at);
 
 -- Create composite indexes for common query patterns
 CREATE INDEX idx_expenses_category_date ON expenses(category_id, date);
-CREATE INDEX idx_expenses_payee_date ON expenses(payee_id, date); 
+CREATE INDEX idx_expenses_payee_date ON expenses(payee_id, date);
+CREATE INDEX idx_expenses_account_date ON expenses(account_id, date); 

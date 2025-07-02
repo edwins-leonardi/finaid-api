@@ -23,6 +23,7 @@ type ExpenseFilters struct {
 	CategoryID    *int
 	SubCategoryID *int
 	PayeeID       *int
+	AccountID     *int
 	StartDate     *time.Time
 	EndDate       *time.Time
 }

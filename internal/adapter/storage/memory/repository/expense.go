@@ -106,6 +106,11 @@ func (r *expenseRepository) matchesFilters(expense *domain.Expense, filters port
 		return false
 	}
 
+	// Filter by account
+	if filters.AccountID != nil && expense.AccountID != *filters.AccountID {
+		return false
+	}
+
 	// Filter by start date
 	if filters.StartDate != nil && expense.Date.Before(*filters.StartDate) {
 		return false

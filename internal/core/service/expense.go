@@ -15,6 +15,7 @@ type expenseService struct {
 	categoryRepo    port.ExpenseCategoryRepository
 	subCategoryRepo port.ExpenseSubCategoryRepository
 	personRepo      port.PersonRepository
+	accountRepo     port.AccountRepository
 	logger          *slog.Logger
 }
 
@@ -24,6 +25,7 @@ func NewExpenseService(
 	categoryRepo port.ExpenseCategoryRepository,
 	subCategoryRepo port.ExpenseSubCategoryRepository,
 	personRepo port.PersonRepository,
+	accountRepo port.AccountRepository,
 	logger *slog.Logger,
 ) port.ExpenseService {
 	return &expenseService{
@@ -31,6 +33,7 @@ func NewExpenseService(
 		categoryRepo:    categoryRepo,
 		subCategoryRepo: subCategoryRepo,
 		personRepo:      personRepo,
+		accountRepo:     accountRepo,
 		logger:          logger,
 	}
 }
@@ -81,6 +84,13 @@ func (s *expenseService) Create(ctx context.Context, req *domain.CreateExpenseRe
 		return nil, err
 	}
 
+	// Validate that the account exists
+	_, err = s.accountRepo.GetAccountByID(ctx, uint64(req.AccountID))
+	if err != nil {
+		s.logger.Error("Account not found", "error", err, "account_id", req.AccountID)
+		return nil, err
+	}
+
 	// Sanitize notes
 	notes := strings.TrimSpace(req.Notes)
 
@@ -90,6 +100,7 @@ func (s *expenseService) Create(ctx context.Context, req *domain.CreateExpenseRe
 		SubCategoryID: req.SubCategoryID,
 		Date:          date,
 		PayeeID:       req.PayeeID,
+		AccountID:     req.AccountID,
 		Notes:         notes,
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
@@ -149,6 +160,9 @@ func (s *expenseService) List(ctx context.Context, req *domain.ListExpensesReque
 	}
 	if req.PayeeID > 0 {
 		filters.PayeeID = &req.PayeeID
+	}
+	if req.AccountID > 0 {
+		filters.AccountID = &req.AccountID
 	}
 
 	// Parse date filters
@@ -239,6 +253,13 @@ func (s *expenseService) Update(ctx context.Context, id int, req *domain.UpdateE
 		return nil, err
 	}
 
+	// Validate that the account exists
+	_, err = s.accountRepo.GetAccountByID(ctx, uint64(req.AccountID))
+	if err != nil {
+		s.logger.Error("Account not found", "error", err, "account_id", req.AccountID)
+		return nil, err
+	}
+
 	// Sanitize notes
 	notes := strings.TrimSpace(req.Notes)
 
@@ -248,6 +269,7 @@ func (s *expenseService) Update(ctx context.Context, id int, req *domain.UpdateE
 	existingExpense.SubCategoryID = req.SubCategoryID
 	existingExpense.Date = date
 	existingExpense.PayeeID = req.PayeeID
+	existingExpense.AccountID = req.AccountID
 	existingExpense.Notes = notes
 	existingExpense.UpdatedAt = time.Now()
 

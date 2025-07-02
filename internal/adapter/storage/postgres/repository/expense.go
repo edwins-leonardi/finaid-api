@@ -25,8 +25,8 @@ func NewExpenseRepository(db *pgxpool.Pool) port.ExpenseRepository {
 
 func (r *expenseRepository) Create(ctx context.Context, expense *domain.Expense) error {
 	query := `
-		INSERT INTO expenses (amount, category_id, subcategory_id, date, payee_id, notes, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		INSERT INTO expenses (amount, category_id, subcategory_id, date, payee_id, account_id, notes, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING id`
 
 	err := r.db.QueryRow(ctx, query,
@@ -35,6 +35,7 @@ func (r *expenseRepository) Create(ctx context.Context, expense *domain.Expense)
 		expense.SubCategoryID,
 		expense.Date,
 		expense.PayeeID,
+		expense.AccountID,
 		expense.Notes,
 		expense.CreatedAt,
 		expense.UpdatedAt,
@@ -49,7 +50,7 @@ func (r *expenseRepository) Create(ctx context.Context, expense *domain.Expense)
 
 func (r *expenseRepository) GetByID(ctx context.Context, id int) (*domain.Expense, error) {
 	query := `
-		SELECT id, amount, category_id, subcategory_id, date, payee_id, notes, created_at, updated_at
+		SELECT id, amount, category_id, subcategory_id, date, payee_id, account_id, notes, created_at, updated_at
 		FROM expenses
 		WHERE id = $1`
 
@@ -61,6 +62,7 @@ func (r *expenseRepository) GetByID(ctx context.Context, id int) (*domain.Expens
 		&expense.SubCategoryID,
 		&expense.Date,
 		&expense.PayeeID,
+		&expense.AccountID,
 		&expense.Notes,
 		&expense.CreatedAt,
 		&expense.UpdatedAt,
@@ -83,7 +85,7 @@ func (r *expenseRepository) List(ctx context.Context, filters port.ExpenseFilter
 	argIndex := 1
 
 	baseQuery := `
-		SELECT id, amount, category_id, subcategory_id, date, payee_id, notes, created_at, updated_at
+		SELECT id, amount, category_id, subcategory_id, date, payee_id, account_id, notes, created_at, updated_at
 		FROM expenses`
 
 	// Add WHERE conditions based on filters
@@ -102,6 +104,12 @@ func (r *expenseRepository) List(ctx context.Context, filters port.ExpenseFilter
 	if filters.PayeeID != nil {
 		conditions = append(conditions, fmt.Sprintf("payee_id = $%d", argIndex))
 		args = append(args, *filters.PayeeID)
+		argIndex++
+	}
+
+	if filters.AccountID != nil {
+		conditions = append(conditions, fmt.Sprintf("account_id = $%d", argIndex))
+		args = append(args, *filters.AccountID)
 		argIndex++
 	}
 
@@ -145,6 +153,7 @@ func (r *expenseRepository) List(ctx context.Context, filters port.ExpenseFilter
 			&expense.SubCategoryID,
 			&expense.Date,
 			&expense.PayeeID,
+			&expense.AccountID,
 			&expense.Notes,
 			&expense.CreatedAt,
 			&expense.UpdatedAt,
@@ -165,7 +174,7 @@ func (r *expenseRepository) List(ctx context.Context, filters port.ExpenseFilter
 func (r *expenseRepository) Update(ctx context.Context, expense *domain.Expense) error {
 	query := `
 		UPDATE expenses
-		SET amount = $2, category_id = $3, subcategory_id = $4, date = $5, payee_id = $6, notes = $7, updated_at = $8
+		SET amount = $2, category_id = $3, subcategory_id = $4, date = $5, payee_id = $6, account_id = $7, notes = $8, updated_at = $9
 		WHERE id = $1`
 
 	cmdTag, err := r.db.Exec(ctx, query,
@@ -175,6 +184,7 @@ func (r *expenseRepository) Update(ctx context.Context, expense *domain.Expense)
 		expense.SubCategoryID,
 		expense.Date,
 		expense.PayeeID,
+		expense.AccountID,
 		expense.Notes,
 		expense.UpdatedAt,
 	)
